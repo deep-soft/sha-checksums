@@ -1,0 +1,61 @@
+# 2023-06-18 20:30
+name: 'SHA checksums'
+author: 'deep-soft'
+branding:
+  icon: 'archive'
+  color: 'yellow'
+description: 'GitHub action that can be used to create SHA checksums for files'
+inputs:
+  filename:
+    description: 'The filename for the generated checksums, relative to directory'
+    required: true
+    default: 'SHA256SUMS'
+  path:
+    description: 'Base path for checksum file'
+    default: '.'
+    required: false
+  directory:
+    description: 'Working directory'
+    default: '.'
+    required: false
+  exclusions:
+    description: 'List of excluded files / directories (Windows only)'
+    default: ''
+    required: false
+  recursive_exclusions:
+    description: 'List of excluded files / directories with recursive wildcards (Windows only)'
+    default: ''
+    required: false
+  type:
+    description: 'Which variant sha1/sha256/sha512/md5 (sha512 Linux, macOs only)'
+    default: 'sha256'
+    required: false
+    type: choice
+    options:
+      - md5
+      - sha1
+      - sha256
+      - sha512
+  debug:
+    description: 'Set debug mode (yes/no)'
+    default: 'no'
+    required: false
+    type: choice
+    options:
+      - yes
+      - no
+
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        INPUT_FILENAME: ${{ inputs.filename }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_DIRECTORY: ${{ inputs.directory }}
+        INPUT_EXCLUSIONS: ${{ inputs.exclusions }}
+        INPUT_RECURSIVE_EXCLUSIONS: ${{ inputs.recursive_exclusions }}
+        INPUT_TYPE: ${{ inputs.type }}
+        DEBUG_MODE: ${{ inputs.debug }}
+        MSYS_NO_PATHCONV: true
+      run: bash $GITHUB_ACTION_PATH/entrypoint.sh
