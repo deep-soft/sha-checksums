@@ -1,0 +1,77 @@
+# 2023-06-18 13:30
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'sha1 / sha256 / sha512 / md5'
+        required: true
+        default: 'sha256'
+        type: choice
+        options:
+          - sha1
+          - sha256
+          - sha512
+          - md5
+      debug:
+        description: 'Debug mode'
+        required: false
+        default: "yes"
+        type: choice
+        options:
+          - "yes"
+          - "no"
+
+env:
+  TAG_NAME: "sha-checksums"
+  VERSION: v1.0
+
+jobs:
+  Test:
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: windows-2022   }
+          - { os: windows-latest }
+          - { os: ubuntu-latest  }
+          - { os: ubuntu-20.04   }
+          - { os: macos-latest   }
+          - { os: macos-11       }
+
+    steps:
+
+      - name: Checkout source
+        uses: deep-soft/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Test
+        uses: deep-soft/sha-checksums@main
+        with:
+          type: ${{ github.event.inputs.type }}
+          filename: '${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}.${{ github.event.inputs.type }}'
+          directory: '.'
+          path: '.'
+          exclusions: '*.git* /*node_modules/* .editorconfig'
+          debug: ${{ github.event.inputs.debug }}
+          # checksums filename is ${{ env.SHA_SUMS }}
+
+      - name: Upload artifact
+        continue-on-error: true
+        uses: deep-soft/upload-artifact@main
+        with:
+          name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          path: ${{ env.SHA_SUMS }}
+
+      - name: Publish Release
+        #continue-on-error: true
+        uses: deep-soft/action-gh-release@v1
+        with:
+          draft: true
+          tag_name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          files: |
+            ${{ env.SHA_SUMS }}
+
