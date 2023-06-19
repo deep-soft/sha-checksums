@@ -19,56 +19,26 @@ fi
 if [ "$INPUT_TYPE" = "sha1" ] || [ "$INPUT_TYPE" = "sha256" ] || [ "$INPUT_TYPE" = "sha512" ] || [ "$INPUT_TYPE" = "md5" ] 
 then
   EXCLUSIONS=""
-  if [ "$RUNNER_OS" = "Windows" ]
+  if [ "$IGNORE_GIT" = "true" ]
   then
-    if [ "$IGNORE_GIT" = "true" ]
-    then
-      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
-    fi
-    EXCLUSIONS+=" -not -name $INPUT_FILENAME"
-    if [ -n "$INPUT_EXCLUSIONS" ]
-    then
-      for EXCLUSION in $INPUT_EXCLUSIONS
-      do
-        EXCLUSIONS+=" -not -name $EXCLUSION"
-      done
-    fi
-    # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
-    # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
-    # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | grep -v "\\[  ]$"  | grep -v "\\[ ]$" | awk "{printf (\"%s  %s\n\", \$1, \$3)}" > "$INPUT_FILENAME" || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-    find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-  elif [ "$RUNNER_OS" = "macOS" ]
+    EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
+  fi
+  EXCLUSIONS+=" -not -name $INPUT_FILENAME"
+  if [ -n "$INPUT_EXCLUSIONS" ]
   then
-    if [ "$IGNORE_GIT" = "true" ]
-    then
-      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
-    fi
-    EXCLUSIONS+=" -not -name $INPUT_FILENAME"
-    if [ -n "$INPUT_EXCLUSIONS" ]
-    then
-      for EXCLUSION in $INPUT_EXCLUSIONS
-      do
-        EXCLUSIONS+=" -not -name $EXCLUSION"
-      done
-    fi
+    for EXCLUSION in $INPUT_EXCLUSIONS
+    do
+      EXCLUSIONS+=" -not -name $EXCLUSION"
+    done
+  fi
+  
+  if [ "$RUNNER_OS" = "macOS" ]
+  then
     # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
     find $INPUT_PATH $EXCLUSIONS -type f -exec shasum -a ${INPUT_TYPE#???} {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   else
-    if [ "$IGNORE_GIT" = "true" ]
-    then
-      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
-    fi
-    EXCLUSIONS+=" -not -name $INPUT_FILENAME"
-    if [ -n "$INPUT_EXCLUSIONS" ]
-    then
-      for EXCLUSION in $INPUT_EXCLUSIONS
-      do
-        EXCLUSIONS+=" -not -name $EXCLUSION"
-      done
-    fi
-    # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
-    # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
+    # work in windows 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
 else
