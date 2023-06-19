@@ -47,7 +47,7 @@ then
   then
     if [ "$IGNORE_GIT" = "true" ]
     then
-      EXCLUSIONS+=" -path ./.git/* -prune -path .git/* -prune "
+      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
     fi
     EXCLUSIONS+=" -not -name $INPUT_FILENAME"
     if [ -n "$INPUT_EXCLUSIONS" ]
@@ -63,7 +63,7 @@ then
   else
     if [ "$IGNORE_GIT" = "true" ]
     then
-      EXCLUSIONS+=" -path ./.git/* -prune -path .git/* -prune "
+      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
     fi
     EXCLUSIONS+=" -not -name $INPUT_FILENAME"
     if [ -n "$INPUT_EXCLUSIONS" ]
