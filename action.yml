@@ -44,6 +44,10 @@ inputs:
     options:
       - yes
       - no
+  ignore_git:
+    description: 'Ingnore ./git'
+    default: true
+    required: false
 
 runs:
   using: composite
@@ -57,5 +61,6 @@ runs:
         INPUT_RECURSIVE_EXCLUSIONS: ${{ inputs.recursive_exclusions }}
         INPUT_TYPE: ${{ inputs.type }}
         DEBUG_MODE: ${{ inputs.debug }}
+        IGNORE_GIT: ${{ inputs.ignore_git }}
         MSYS_NO_PATHCONV: true
       run: bash $GITHUB_ACTION_PATH/entrypoint.sh
