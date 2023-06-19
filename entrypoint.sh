@@ -1,5 +1,5 @@
 #! /bin/bash
-# 2023-06-18 20:30
+# 2023-06-19 23:10
 
 # Create sha sums or exit if command fails
 #set -eu
@@ -32,13 +32,14 @@ then
     done
   fi
   
+  # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
+  # work in windows 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME    
+  # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
+  
   if [ "$RUNNER_OS" = "macOS" ]
   then
-    # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
-    # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
     find $INPUT_PATH $EXCLUSIONS -type f -exec shasum -a ${INPUT_TYPE#???} {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   else
-    # work in windows 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
 else
