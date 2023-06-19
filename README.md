@@ -2,6 +2,7 @@
 GitHub action that can be used to create SHA checksums for files.
 
 It works on all platforms: **Linux**, **MacOS** and **Windows**.
+Tested on macOS 11, macOS 12, ubuntu 18.04, ubuntu 20.04, ubuntu 22.04, windows 2019, windows 2022.
 
 ## Usage
 An example workflow config:
@@ -20,6 +21,7 @@ jobs:
         filename: 'SHA256SUMS'
         directory: '.'
         path: 'release'
+        ignore_git: false
 ```
 
 The generated archive will be placed as specified by `directory`, `path` and `filename`.
@@ -44,4 +46,9 @@ The path to the files or directory for which checksums will be computed, relativ
 ### `type`
 Default: `SHA256`
 
-`SHA1`, `SHA256`, `SHA512`, `MD5`.
+`SHA1`, `SHA256`, `SHA512`
+
+### `ignore_git`
+Default: `true`
+
+Ignore path ./git and ./.git/
