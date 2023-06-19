@@ -42,7 +42,8 @@ then
     # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | awk "{printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\  $" | grep -v "\\ $" | grep -v "\\$" > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
     # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS > $INPUT_FILENAME.tmp || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-    7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | grep -v "\\[  ]$"  | grep -v "\\[ ]$" | awk "{printf (\"%s  %s\n\", \$1, \$3)}" > "$INPUT_FILENAME" || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | grep -v "\\[  ]$"  | grep -v "\\[ ]$" | awk "{printf (\"%s  %s\n\", \$1, \$3)}" > "$INPUT_FILENAME" || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   elif [ "$RUNNER_OS" = "macOS" ]
   then
     if [ "$IGNORE_GIT" = "true" ]
