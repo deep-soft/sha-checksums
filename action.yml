@@ -34,10 +34,13 @@ inputs:
     required: false
     type: choice
     options:
-      - md5
       - sha1
       - sha256
       - sha512
+  ignore_git:
+    description: 'Ignore ./git'
+    default: true
+    required: false
   debug:
     description: 'Set debug mode (yes/no)'
     default: 'no'
@@ -46,10 +49,6 @@ inputs:
     options:
       - yes
       - no
-  ignore_git:
-    description: 'Ingnore ./git'
-    default: true
-    required: false
 
 runs:
   using: composite
