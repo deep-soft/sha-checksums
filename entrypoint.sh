@@ -23,27 +23,20 @@ then
   then
     if [ "$IGNORE_GIT" = "true" ]
     then
-      EXCLUSIONS+=" -x!./.git/ -x!*.git/ -x!.git/"
+      EXCLUSIONS+=" -path ./.git/* -prune -o -path .git/* -prune -o "
     fi
-    EXCLUSIONS+=" -x!$INPUT_FILENAME"
-    if [ -n "$INPUT_EXCLUSIONS" ] || [ -n "$INPUT_RECURSIVE_EXCLUSIONS" ]
-    then 
+    EXCLUSIONS+=" -not -name $INPUT_FILENAME"
+    if [ -n "$INPUT_EXCLUSIONS" ]
+    then
       for EXCLUSION in $INPUT_EXCLUSIONS
       do
-        EXCLUSIONS+=" -x!$EXCLUSION"
-      done
-      for EXCLUSION in $INPUT_RECURSIVE_EXCLUSIONS
-      do
-        EXCLUSIONS+=" -xr!$EXCLUSION"
+        EXCLUSIONS+=" -not -name $EXCLUSION"
       done
     fi
-    # 7z h -scrcSHA256 -xr!LICENSE -x!_sha_sums_tmp_ * >_sha_sums_tmp_
-    # 7z h -scrc$INPUT_TYPE $INPUT_PATH $EXCLUSIONS >_sha_sums_tmp_ || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-    # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
-    # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | awk "{printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\  $" | grep -v "\\ $" | grep -v "\\$" > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-    # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS > $INPUT_FILENAME.tmp || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
+    # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
     # 7z h -scrc"$INPUT_TYPE" -ba $INPUT_PATH $EXCLUSIONS | grep -v "\\[  ]$"  | grep -v "\\[ ]$" | awk "{printf (\"%s  %s\n\", \$1, \$3)}" > "$INPUT_FILENAME" || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
-    find $INPUT_PATH -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   elif [ "$RUNNER_OS" = "macOS" ]
   then
     if [ "$IGNORE_GIT" = "true" ]
