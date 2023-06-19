@@ -55,7 +55,7 @@ jobs:
           filename: '${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}.${{ github.event.inputs.type }}'
           directory: '.'
           path: '.'
-          exclusions: '*.git* /*node_modules/* .editorconfig'
+          exclusions: '*.git/* /*node_modules/* .editorconfig'
           debug: ${{ github.event.inputs.debug }}
           # checksums filename is ${{ env.SHA_SUMS }}
 
