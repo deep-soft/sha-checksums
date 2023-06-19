@@ -22,6 +22,10 @@ on:
         options:
           - "yes"
           - "no"
+      ignore_git:
+        description: 'Ignore ./.git/ .git/'
+        required: false
+        default: true
 
 env:
   TAG_NAME: "sha-checksums"
@@ -55,8 +59,9 @@ jobs:
           filename: '${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}.${{ github.event.inputs.type }}'
           directory: '.'
           path: '.'
-          exclusions: '*.git/* /*node_modules/* .editorconfig'
+          exclusions: '*node_modules* .editorconfig'
           debug: ${{ github.event.inputs.debug }}
+          ignore_git: true
           # checksums filename is ${{ env.SHA_SUMS }}
 
       - name: Upload artifact
