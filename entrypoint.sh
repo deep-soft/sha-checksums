@@ -47,7 +47,7 @@ then
   then
     if [ "$IGNORE_GIT" = "true" ]
     then
-      EXCLUSIONS+=" -not -path ./.git/ -not -path .git/"
+      EXCLUSIONS+=" -path ./.git/ -prune -path .git/ -prune "
     fi
     EXCLUSIONS+=" -not -name $INPUT_FILENAME"
     if [ -n "$INPUT_EXCLUSIONS" ]
@@ -59,11 +59,11 @@ then
     fi
     # work on windows but not in GH CI # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
-    find $INPUT_PATH -type f $EXCLUSIONS -exec shasum -a ${INPUT_TYPE#???} {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    find $INPUT_PATH $EXCLUSIONS -type f -exec shasum -a ${INPUT_TYPE#???} {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   else
     if [ "$IGNORE_GIT" = "true" ]
     then
-      EXCLUSIONS+=" -not -path ./.git/ -not -path .git/"
+      EXCLUSIONS+=" -path ./.git/ -prune -path .git/ -prune "
     fi
     EXCLUSIONS+=" -not -name $INPUT_FILENAME"
     if [ -n "$INPUT_EXCLUSIONS" ]
@@ -75,7 +75,7 @@ then
     fi
     # 7z h -scrc$INPUT_TYPE -ba $INPUT_PATH $EXCLUSIONS | awk "OFS=\"\\t\" {printf (\"%s  %s\n\", $1, $3)}" | grep -v "\\ $" > $INPUT_FILENAME
     # lowercase not working in macOS INPUT_TYPE_L=${INPUT_TYPE,,}
-    find $INPUT_PATH -type f $EXCLUSIONS -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
+    find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
 else
   printf "\n⛔ Invalid SHA type.\n"; exit 1;
