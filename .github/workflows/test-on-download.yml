@@ -51,7 +51,7 @@ jobs:
 
     steps:
 
-      - name: Download and test sha256
+      - name: Download
         shell: bash
         run: |
           set -x;
@@ -61,6 +61,7 @@ jobs:
           echo "putty_w64_checksum=$putty_w64_checksum";
           if [ "$putty_w64_checksum" == "5288add504f818e3d505634a5ece1e35d4af3771fad095b35064d39ca4913130" ]; then
             echo "OK SHA256 = $putty_w64_checksum";
+            echo "putty_w64_checksum=$putty_w64_checksum" >> $GITHUB_ENV;
           fi
 
       - name: putty-w64.zip
@@ -75,6 +76,22 @@ jobs:
           ignore_git: true
           # checksums filename is ${{ env.SHA_SUMS }}
 
+      - name: test sha256
+        shell: bash
+        run: |
+          putty_w64_checksum_v2=$(grep "putty-w64.zip" ${{ env.SHA_SUMS }} | awk '{print $1}');
+          if [ $putty_w64_checksum_v2 == ${{ env.putty_w64_checksum }} ]; then
+            echo "OK SHA256: $putty_w64_checksum_v2 == ${{ env.putty_w64_checksum }}";
+            echo "putty_w64_checksum_v2=$putty_w64_checksum_v2" >> $GITHUB_ENV;
+          fi
+
+      - name: print env values
+        shell: bash
+        run: |
+          echo "print env values: putty_w64_checksum and putty_w64_checksum_v2";
+          echo "putty_w64_checksum    = ${{ env.putty_w64_checksum }}";
+          echo "putty_w64_checksum_v2 = ${{ env.putty_w64_checksum_v2 }}";
+          
       - name: Upload artifact
         continue-on-error: true
         uses: deep-soft/upload-artifact@main
