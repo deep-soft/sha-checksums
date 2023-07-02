@@ -1,0 +1,87 @@
+# 2023-06-18 13:30
+name: Test - on download
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: 'sha1 / sha256 / sha512'
+        required: true
+        default: 'sha256'
+        type: choice
+        options:
+          - sha1
+          - sha256
+          - sha512
+      ignore_git:
+        description: 'Ignore ./.git/ .git/'
+        required: false
+        default: true
+      debug:
+        description: 'Debug mode'
+        required: false
+        default: "yes"
+        type: choice
+        options:
+          - "yes"
+          - "no"
+
+env:
+  TAG_NAME: "sha-checksums"
+  VERSION: v1.0
+
+jobs:
+  Test:
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { os: macos-11       }
+          - { os: macos-12       }
+          - { os: macos-13       }
+          - { os: macos-latest   }
+          - { os: ubuntu-20.04   }
+          - { os: ubuntu-22.04   }
+          - { os: ubuntu-latest  }
+          - { os: windows-2019   }
+          - { os: windows-2022   }
+          - { os: windows-latest }
+
+    steps:
+
+      - name: Download
+        shell: bash
+        run: |
+          curl -L -o putty-w64.zip https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip
+          curl -L -o putty-sha256sums
+          putty-w64-checksum=$(grep "w64/putty.zip" | awk '{print $1}'
+          echo "putty-w64-checksum=$putty-w64-checksum"
+
+      - name: putty-w64.zip
+        uses: deep-soft/sha-checksums@main
+        with:
+          type: ${{ github.event.inputs.type }}
+          filename: '${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}.${{ github.event.inputs.type }}'
+          directory: '.'
+          path: 'putty-w64.zip'
+          exclusions: ''
+          debug: ${{ github.event.inputs.debug }}
+          ignore_git: true
+          # checksums filename is ${{ env.SHA_SUMS }}
+
+      - name: Upload artifact
+        continue-on-error: true
+        uses: deep-soft/upload-artifact@main
+        with:
+          name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          path: ${{ env.SHA_SUMS }}
+
+      - name: Publish Release
+        #continue-on-error: true
+        uses: deep-soft/action-gh-release@v1
+        with:
+          draft: true
+          tag_name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          files: |
+            ${{ env.SHA_SUMS }}
