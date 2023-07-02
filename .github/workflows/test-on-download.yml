@@ -21,7 +21,7 @@ on:
       debug:
         description: 'Debug mode'
         required: false
-        default: "yes"
+        default: "no"
         type: choice
         options:
           - "yes"
