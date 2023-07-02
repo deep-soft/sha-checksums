@@ -15,6 +15,7 @@ on:
           - sha512
       ignore_git:
         description: 'Ignore ./.git/ .git/'
+        type: boolean
         required: false
         default: true
       debug:
