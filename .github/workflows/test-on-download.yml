@@ -58,9 +58,9 @@ jobs:
             set -x;
           fi
           echo "download putty, windows 64bit, latest version. maybe is 0.78 ?!"
-          curl -L -o putty-w64.zip https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip;
+          curl -s -L -o putty-w64.zip https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip;
           echo "download putty, sha256sums for latest version"
-          curl -L -o putty-sha256sums https://the.earth.li/~sgtatham/putty/latest/sha256sums;
+          curl -s -L -o putty-sha256sums https://the.earth.li/~sgtatham/putty/latest/sha256sums;
           putty_w64_checksum=$(grep "w64/putty.zip" putty-sha256sums | awk '{print $1}');
           echo "putty_w64_checksum=$putty_w64_checksum";
           if [ "$putty_w64_checksum" == "5288add504f818e3d505634a5ece1e35d4af3771fad095b35064d39ca4913130" ]; then
