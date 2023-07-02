@@ -57,6 +57,9 @@ jobs:
           curl -L -o putty-sha256sums
           putty-w64-checksum=$(grep "w64/putty.zip" | awk '{print $1}'
           echo "putty-w64-checksum=$putty-w64-checksum"
+          if [ "$putty-w64-checksum" == "5288add504f818e3d505634a5ece1e35d4af3771fad095b35064d39ca4913130" ]; then
+            echo "OK SHA256 = $putty-w64-checksum"
+          fi
 
       - name: putty-w64.zip
         uses: deep-soft/sha-checksums@main
@@ -82,6 +85,7 @@ jobs:
         uses: deep-soft/action-gh-release@v1
         with:
           draft: true
-          tag_name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          #tag_name: ${{ env.TAG_NAME }}-${{ env.VERSION }}-${{ matrix.job.os }}
+          tag_name: ${{ env.TAG_NAME }}-${{ env.VERSION }}
           files: |
             ${{ env.SHA_SUMS }}
