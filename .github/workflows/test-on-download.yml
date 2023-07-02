@@ -54,6 +54,7 @@ jobs:
       - name: Download
         shell: bash
         run: |
+          set -x
           curl -L -o putty-w64.zip https://the.earth.li/~sgtatham/putty/latest/w64/putty.zip
           curl -L -o putty-sha256sums https://the.earth.li/~sgtatham/putty/latest/sha256sums
           putty-w64-checksum=$(grep "w64/putty.zip" | awk '{print $1}')
