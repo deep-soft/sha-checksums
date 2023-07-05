@@ -5,8 +5,6 @@ It works on all platforms: **Linux**, **MacOS** and **Windows**.
 
 Tested on macos-11, macos-12, macos-13, ubuntu-20.04, ubuntu-22.04, windows-2019, windows-2022.
 
-Note: In Windows, the SHA checksums  created for text files ( *.txt *.sh *.c *.cpp *.yml ...) are different from the SHA checksum created in linux and macOS due to CR+LF vs CR or LF
-
 ## Usage
 An example workflow config:
 ```yaml
