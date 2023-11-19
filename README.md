@@ -22,6 +22,7 @@ jobs:
         filename: 'SHA256SUMS'
         directory: '.'
         path: 'release'
+        env_variable: 'SHA_SUMS'
         ignore_git: false
 ```
 
@@ -45,9 +46,9 @@ Default: `.`
 The path to the files or directory for which checksums will be computed, relative to `directory`.
 
 ### `type`
-Default: `SHA256`
+Default: `sha256`
 
-`SHA1`, `SHA256`, `SHA512`
+`sha1`, `sha256`, `sha512`, 'md5'
 
 ### `ignore_git`
 Default: `true`
