@@ -48,7 +48,7 @@ The path to the files or directory for which checksums will be computed, relativ
 ### `type`
 Default: `sha256`
 
-`sha1`, `sha256`, `sha512`, 'md5'
+`sha1`, `sha256`, `sha512`, `md5`
 
 ### `ignore_git`
 Default: `true`
