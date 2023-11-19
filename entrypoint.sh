@@ -1,5 +1,5 @@
 #! /bin/bash
-# 2023-06-19 23:10
+# 2023-11-19 08:00
 
 # Create sha sums or exit if command fails
 #set -eu
@@ -9,6 +9,12 @@ then
   set -x
 fi
 
+StartTime="$(date -u +%s)"
+CrtDate=$(date "+%F^%H:%M:%S")
+echo "Start: " $CrtDate
+
+# change path separator to /
+INPUT_DIRECTORY=$(echo $INPUT_DIRECTORY | tr '\\' /)
 printf "\n📦 Creating sums=[%s], dir=[%s], name=[%s], path=[%s], runner=[%s] ...\n" "$INPUT_TYPE" "$INPUT_DIRECTORY" "$INPUT_FILENAME" "$INPUT_PATH" "$RUNNER_OS"
 
 if [ "$INPUT_DIRECTORY" != "." ] 
@@ -42,6 +48,7 @@ then
   else
     find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
+  ARCHIVE_SIZE=$(find . -name $INPUT_FILENAME -printf '(%s bytes) = (%k KB)')
 else
   printf "\n⛔ Invalid SHA type.\n"; exit 1;
 fi
@@ -50,5 +57,17 @@ if [ "$DEBUG_MODE" = "yes" ]
 then
   cat $INPUT_FILENAME
 fi
-printf "\n✔ Successfully created sums=[%s], dir=[%s], name=[%s], path=[%s], runner=[%s] ...\n" "$INPUT_TYPE" "$INPUT_DIRECTORY" "$INPUT_FILENAME" "$INPUT_PATH" "$RUNNER_OS"
-echo "SHA_SUMS=$INPUT_FILENAME" >> $GITHUB_ENV
+
+FinishTime="$(date -u +%s)"
+CrtDate=$(date "+%F^%H:%M:%S")
+echo "Finish: " $CrtDate
+
+ElapsedTime=$(( FinishTime - StartTime ))
+echo "Elapsed: $ElapsedTime"
+
+printf "\n✔ Successfully created sums=[%s], dir=[%s], name=[%s], path=[%s], size=[%s], runner=[%s] duration=[%ssec]...\n" "$INPUT_TYPE" "$INPUT_DIRECTORY" "$INPUT_FILENAME" "$INPUT_PATH" "$ARCHIVE_SIZE" "$RUNNER_OS" "$ElapsedTime"
+if [[ $INPUT_FILENAME =~ ^/ ]]; then
+  echo "$INPUT_SUMS_NAME=$INPUT_FILENAME" >> $GITHUB_ENV
+else
+  echo "$INPUT_SUMS_NAME=$INPUT_DIRECTORY/$INPUT_FILENAME" >> $GITHUB_ENV
+fi
