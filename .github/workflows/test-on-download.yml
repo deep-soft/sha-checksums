@@ -64,7 +64,7 @@ jobs:
           curl -s -L -o putty-sha256sums https://the.earth.li/~sgtatham/putty/latest/sha256sums;
           putty_w64_checksum=$(grep "w64/putty.zip" putty-sha256sums | awk '{print $1}');
           echo "putty_w64_checksum=$putty_w64_checksum";
-          if [[ "$putty_w64_checksum" == "5288add504f818e3d505634a5ece1e35d4af3771fad095b35064d39ca4913130" ]]; then
+          if [[ "$putty_w64_checksum" == "a8793da2e14481703af58a0ba56d0db0b326c630226cd8bbc0d3dc7f14829b4b" ]]; then
             echo "OK SHA256 = $putty_w64_checksum";
             echo "putty, windows 64bit, version 0.78, download OK"
             echo "putty_w64_checksum=$putty_w64_checksum" >> $GITHUB_ENV;
@@ -86,7 +86,7 @@ jobs:
         shell: bash
         run: |
           putty_w64_checksum_v2=$(grep "putty-w64.zip" ${{ env.SHA_SUMS }} | awk '{print $1}');
-          if [[ "$putty_w64_checksum_v2" == "${{ env.putty_w64_checksum }}" ]]; then
+          if [[ "$putty_w64_checksum_v2" != "" && "$putty_w64_checksum_v2" == "${{ env.putty_w64_checksum }}" ]]; then
             echo "OK SHA256: $putty_w64_checksum_v2 == ${{ env.putty_w64_checksum }}";
             echo "putty_w64_checksum_v2=$putty_w64_checksum_v2" >> $GITHUB_ENV;
           fi
