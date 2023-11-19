@@ -1,11 +1,11 @@
-# 2023-06-18 13:30
+# 2023-11-19 13:30
 name: Test - on download
 
 on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'sha1 / sha256 / sha512'
+        description: 'sha1 / sha256 / sha512 / md5'
         required: true
         default: 'sha256'
         type: choice
@@ -13,6 +13,7 @@ on:
           - sha1
           - sha256
           - sha512
+          - md5
       ignore_git:
         description: 'Ignore ./.git/ .git/'
         type: boolean
