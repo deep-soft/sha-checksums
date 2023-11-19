@@ -48,6 +48,7 @@ then
   else
     find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
+  sed -i "s/ \*/ /" $INPUT_FILENAME;
   ARCHIVE_SIZE=$(find . -name $INPUT_FILENAME -printf '(%s bytes) = (%k KB)')
 else
   printf "\n⛔ Invalid SHA type.\n"; exit 1;
