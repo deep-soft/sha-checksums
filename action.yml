@@ -42,6 +42,10 @@ inputs:
     description: 'Ignore ./git'
     default: true
     required: false
+  env_variable:
+    description: 'env variable name to set'
+    default: 'SHA_SUMS'
+    required: false
   debug:
     description: 'Set debug mode (yes/no)'
     default: 'no'
@@ -61,6 +65,7 @@ runs:
         INPUT_DIRECTORY: ${{ inputs.directory }}
         INPUT_EXCLUSIONS: ${{ inputs.exclusions }}
         INPUT_RECURSIVE_EXCLUSIONS: ${{ inputs.recursive_exclusions }}
+        INPUT_SUMS_NAME: ${{ inputs.env_variable }}
         INPUT_TYPE: ${{ inputs.type }}
         DEBUG_MODE: ${{ inputs.debug }}
         IGNORE_GIT: ${{ inputs.ignore_git }}
