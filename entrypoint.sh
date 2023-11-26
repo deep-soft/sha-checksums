@@ -48,7 +48,9 @@ then
   else
     find $INPUT_PATH $EXCLUSIONS -type f -exec "$INPUT_TYPE"sum {} \; > $INPUT_FILENAME || { printf "\n⛔ Unable to create %s file.\n" "$INPUT_TYPE"; exit 1;  }
   fi
-  if [[ "$RUNNER_OS" != "macOS" ]]; then
+  if [[ "$RUNNER_OS" == "macOS" ]]; then
+    ARCHIVE_SIZE=$(stat -c %s $INPUT_FILENAME);
+  else
     sed -i "s/ \*/ /" $INPUT_FILENAME;
     ARCHIVE_SIZE=$(find . -name $INPUT_FILENAME -printf '(%s bytes) = (%k KB)');
   fi
