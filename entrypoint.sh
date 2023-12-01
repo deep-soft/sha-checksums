@@ -22,9 +22,7 @@ then
   cd $INPUT_DIRECTORY
 fi
 
-#INPUT_TYPE=${INPUT_TYPE,,};
-INPUT_TYPE=$INPUT_TYPE:l;
-echo "INPUT_TYPE=$INPUT_TYPE";
+#bash4 only INPUT_TYPE=${INPUT_TYPE,,};
 INPUT_TYPE=$(echo "$INPUT_TYPE" | tr '[:upper:]' '[:lower:]')
 echo "INPUT_TYPE=$INPUT_TYPE";
 
