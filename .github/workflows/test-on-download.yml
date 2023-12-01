@@ -5,15 +5,15 @@ on:
   workflow_dispatch:
     inputs:
       type:
-        description: 'sha1 / sha256 / sha512 / md5'
+        description: 'SHA1 / SHA256 / SHA512 / MD5'
         required: true
-        default: 'sha256'
+        default: 'SHA256'
         type: choice
         options:
-          - sha1
-          - sha256
-          - sha512
-          - md5
+          - SHA1
+          - SHA256
+          - SHA512
+          - MD5
       ignore_git:
         description: 'Ignore ./.git/ .git/'
         type: boolean
