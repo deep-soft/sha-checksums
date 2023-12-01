@@ -22,7 +22,10 @@ then
   cd $INPUT_DIRECTORY
 fi
 
-INPUT_TYPE=${INPUT_TYPE,,};
+#INPUT_TYPE=${INPUT_TYPE,,};
+INPUT_TYPE=$INPUT_TYPE:l;
+echo "INPUT_TYPE=$INPUT_TYPE";
+INPUT_TYPE=$(echo "$INPUT_TYPE" | tr '[:upper:]' '[:lower:]')
 echo "INPUT_TYPE=$INPUT_TYPE";
 
 if [ "$INPUT_TYPE" = "sha1" ] || [ "$INPUT_TYPE" = "sha256" ] || [ "$INPUT_TYPE" = "sha512" ] || [ "$INPUT_TYPE" = "md5" ] 
